@@ -208,3 +208,13 @@ BEGIN
 END $$;
 REVOKE EXECUTE ON FUNCTION public.dashboard_metrics() FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.dashboard_metrics() TO authenticated;
+
+-- Least-privilege table grants. RLS is not a substitute for SQL privileges:
+-- remove Supabase default table grants from anon/authenticated, then grant only
+-- the operations required by the policies above.
+REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA public FROM anon, authenticated;
+GRANT SELECT ON public.profiles TO authenticated;
+GRANT UPDATE (full_name) ON public.profiles TO authenticated;
+GRANT SELECT ON public.user_roles TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.customers TO authenticated;
+GRANT SELECT ON public.audit_logs TO authenticated;
