@@ -36,6 +36,7 @@ export const Route = createFileRoute("/painel")({
     }
     return { me };
   },
+  pendingComponent: () => <div className="flex min-h-screen items-center justify-center text-sm text-muted-foreground" role="status">A validar a sessão e as permissões…</div>,
   head: () => ({
     meta: [
       { title: "Painel administrativo — ESCX" },
@@ -64,13 +65,14 @@ function AdminPanel() {
   async function signOut() {
     setSigningOut(true);
     setSignOutError(null);
-    const { error } = await supabase.auth.signOut();
-    setSigningOut(false);
-    if (error) {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      window.location.assign("/auth");
+    } catch {
+      setSigningOut(false);
       setSignOutError("Não foi possível terminar a sessão. Tente novamente.");
-      return;
     }
-    window.location.assign("/auth");
   }
 
   return (
