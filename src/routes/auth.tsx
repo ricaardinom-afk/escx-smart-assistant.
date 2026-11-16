@@ -7,6 +7,9 @@ import { Wordmark } from "@/components/brand/Wordmark";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/auth")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    semAcesso: search.semAcesso === true || search.semAcesso === "true",
+  }),
   head: () => ({
     meta: [
       { title: "Acesso administrativo — ESCX" },
@@ -23,6 +26,7 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const navigate = useNavigate();
+  const { semAcesso } = Route.useSearch();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -37,7 +41,7 @@ function AuthPage() {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
     if (error) return setError("Credenciais inválidas ou conta sem acesso.");
-    navigate({ to: "/", replace: true }); // TODO: /painel when admin panel exists
+    navigate({ to: "/painel", replace: true });
   }
 
   return (
@@ -46,6 +50,7 @@ function AuthPage() {
         <Link to="/" aria-label="Voltar ao início"><Wordmark /></Link>
         <h1 className="mt-8 text-xl font-semibold">Acesso administrativo</h1>
         <p className="mt-1 text-sm text-muted-foreground">Área reservada à equipa interna. Contas criadas apenas pela administração.</p>
+        {semAcesso && <p role="alert" className="mt-4 rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">Sem acesso. A sua sessão foi terminada porque esta conta não tem um perfil activo com um papel autorizado.</p>}
         <form className="mt-6 space-y-4" onSubmit={onSubmit} noValidate>
           <div className="space-y-1.5">
             <Label htmlFor="email">Email</Label>
