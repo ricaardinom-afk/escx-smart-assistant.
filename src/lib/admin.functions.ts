@@ -68,7 +68,7 @@ export const listCustomers = createServerFn({ method: "GET" })
     await requireRoles(context, ALL);
     let query = context.supabase
       .from("customers")
-      .select("id,name,company,email,phone,commercial_status,request_type,owner_id,first_contact_date,created_at,is_demo")
+      .select("id,name,company,email,phone,commercial_status,request_type,owner_id,first_contact_date,internal_notes,created_at,is_demo")
       .order("created_at", { ascending: false })
       .limit(200);
     const q = sanitizeSearch(data.q);
