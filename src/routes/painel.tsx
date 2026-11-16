@@ -75,12 +75,12 @@ function AdminPanel() {
 
   return (
     <div className="min-h-screen bg-secondary/50 text-foreground lg:grid lg:grid-cols-[260px_minmax(0,1fr)]">
-      <aside className="flex min-h-screen flex-col border-r border-border bg-card">
+      <aside className="flex flex-col border-r border-border bg-card lg:min-h-screen">
         <div className="border-b border-border px-6 py-5">
           <Link to="/" aria-label="ESCX — página inicial"><Wordmark /></Link>
           <p className="mt-3 text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">Área reservada</p>
         </div>
-        <nav aria-label="Navegação administrativa" className="flex-1 space-y-1 p-4">
+        <nav aria-label="Navegação administrativa" className="flex flex-wrap gap-1 p-3 lg:flex-1 lg:flex-col lg:space-y-1 lg:p-4">
           {NAV.map(({ id, label, icon: Icon }) => (
             <button
               key={id}
