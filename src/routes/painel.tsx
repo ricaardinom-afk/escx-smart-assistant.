@@ -1,7 +1,7 @@
-import { createFileRoute, Link, Outlet, redirect } from "@tanstack/react-router";
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { useEffect, useState, type FormEvent } from "react";
 import {
-  Activity, CalendarDays, ChevronDown, ClipboardList, LayoutDashboard, LogOut,
+  Activity, CalendarDays, ClipboardList, LayoutDashboard, LogOut,
   MessageSquare, Plus, Search, Settings, ShieldCheck, Trash2, Users, X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -295,7 +295,7 @@ function CustomersView({ roles }: { roles: AppRole[] }) {
                     <td className="px-4 py-3 text-muted-foreground">{new Date(customer.created_at).toLocaleDateString("pt-PT")}</td>
                     <td className="px-4 py-3"><div className="flex justify-end gap-1">
                       {canWrite && <Button size="sm" variant="outline" onClick={() => { setEditing(customer); setFormError(null); }}>Editar</Button>}
-                      {canDelete && <Button size="icon" size-variant="icon" variant="ghost" aria-label={`Eliminar ${customer.name}`} onClick={() => removeCustomer(customer)}><Trash2 className="size-4 text-destructive" /></Button>}
+                      {canDelete && <Button size="icon" variant="ghost" aria-label={`Eliminar ${customer.name}`} onClick={() => removeCustomer(customer)}><Trash2 className="size-4 text-destructive" /></Button>}
                     </div></td>
                   </tr>
                 ))}
