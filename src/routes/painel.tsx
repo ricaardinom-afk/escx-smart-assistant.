@@ -239,8 +239,8 @@ function CustomersView({ roles }: { roles: AppRole[] }) {
       request_type: String(fd.get("request_type") ?? "").trim() || null,
       first_contact_date: String(fd.get("first_contact_date") ?? "") || null,
       commercial_status: String(fd.get("commercial_status") ?? "novo") as CommercialStatus,
-      owner_id: null,
-      internal_notes: null,
+      owner_id: editing?.owner_id ?? null,
+      internal_notes: String(fd.get("internal_notes") ?? "").trim() || null,
     };
     setSaving(true);
     setFormError(null);
@@ -316,6 +316,7 @@ function CustomersView({ roles }: { roles: AppRole[] }) {
                 <label className="space-y-1 text-sm"><span>Telefone</span><Input name="phone" defaultValue={editing?.phone ?? ""} /></label>
                 <label className="space-y-1 text-sm"><span>Tipo de pedido</span><Input name="request_type" defaultValue={editing?.request_type ?? ""} /></label>
                 <label className="space-y-1 text-sm"><span>Primeiro contacto</span><Input name="first_contact_date" type="date" defaultValue={editing?.first_contact_date ?? ""} /></label>
+                <label className="space-y-1 text-sm sm:col-span-2"><span>Notas internas</span><textarea name="internal_notes" rows={3} defaultValue={editing?.internal_notes ?? ""} className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm" /></label>
                 <label className="space-y-1 text-sm sm:col-span-2"><span>Estado comercial</span><select name="commercial_status" defaultValue={editing?.commercial_status ?? "novo"} className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm">{COMMERCIAL_STATUSES.map((item) => <option key={item} value={item}>{STATUS_LABELS[item]}</option>)}</select></label>
               </div>
               {formError && <p role="alert" className="text-sm text-destructive">{formError}</p>}
