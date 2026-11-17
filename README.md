@@ -1,24 +1,43 @@
-# ESCX SMART ASSISTANT.
+# ESCX Smart Assistant
 
-.
+Aplicação web da ESCX Procurement Service, desenvolvida directamente no código e mantida no GitHub.
 
-This project was built with [Lovable](https://lovable.dev).
+## Tecnologias
 
-## Build with Lovable
+- React 19
+- TypeScript
+- TanStack Start e TanStack Router
+- Vite
+- Tailwind CSS
+- Supabase
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/58ea9236-4f3c-493f-bbd9-dd4c7967d670).
+## Requisitos
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+- Bun (versão compatível com o lockfile do projecto)
+- Node.js, conforme os requisitos das ferramentas de desenvolvimento
 
-## Development
+## Desenvolvimento local
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
-
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
+```bash
+bun install --frozen-lockfile
+bun run dev
 ```
+
+## Verificações
+
+```bash
+bun run typecheck
+bun run lint
+bun run test
+bun run build
+```
+
+## Configuração
+
+Criar um ficheiro `.env` com as variáveis necessárias, usando `.env.example` como referência. Nunca publicar chaves secretas nem colocar credenciais privadas em variáveis com prefixo `VITE_`.
+
+A aplicação utiliza o projecto Supabase já configurado. Não executar migrações ou alterar políticas de segurança como parte da configuração de frontend.
+
+## Agendamento e contacto
+
+Os contactos institucionais e os links de agendamento são centralizados em `src/lib/brand.ts`. Os URLs do Calendly devem ser preenchidos apenas depois de os eventos presencial e online estarem configurados.
