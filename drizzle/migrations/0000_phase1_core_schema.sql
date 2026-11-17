@@ -66,7 +66,7 @@ CREATE OR REPLACE FUNCTION public.has_role(_user_id uuid, _role public.app_role)
 RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
   SELECT EXISTS (
     SELECT 1 FROM public.user_roles r JOIN public.profiles p ON p.id = r.user_id
-    WHERE r.user_id = _user_id AND r.role = _role AND p.is_active
+    WHERE r.user_id = _user_id AND r.role = _role AND p.is_active AND _user_id = auth.uid()
   )
 $$;
 
@@ -74,7 +74,7 @@ CREATE OR REPLACE FUNCTION public.has_any_role(_user_id uuid, _roles public.app_
 RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
   SELECT EXISTS (
     SELECT 1 FROM public.user_roles r JOIN public.profiles p ON p.id = r.user_id
-    WHERE r.user_id = _user_id AND r.role = ANY(_roles) AND p.is_active
+    WHERE r.user_id = _user_id AND r.role = ANY(_roles) AND p.is_active AND _user_id = auth.uid()
   )
 $$;
 
@@ -164,6 +164,8 @@ CREATE OR REPLACE FUNCTION public.protect_last_admin()
 RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
 DECLARE _uid uuid; _remaining int;
 BEGIN
+  -- Serialize administrative role changes so concurrent requests cannot remove the last active admin.
+  PERFORM pg_advisory_xact_lock(hashtextextended('public.protect_last_admin', 0));
   IF TG_TABLE_NAME = 'user_roles' THEN
     IF OLD.role <> 'admin' OR (TG_OP = 'UPDATE' AND NEW.role = 'admin' AND NEW.user_id = OLD.user_id) THEN RETURN coalesce(NEW, OLD); END IF;
     _uid := OLD.user_id;
@@ -193,6 +195,8 @@ CREATE TRIGGER on_auth_user_created AFTER INSERT ON auth.users FOR EACH ROW EXEC
 
 REVOKE EXECUTE ON FUNCTION public.handle_new_user() FROM PUBLIC, anon, authenticated;
 REVOKE EXECUTE ON FUNCTION public.audit_row_change() FROM PUBLIC, anon, authenticated;
+REVOKE EXECUTE ON FUNCTION public.customers_stamp() FROM PUBLIC, anon, authenticated;
+REVOKE EXECUTE ON FUNCTION public.touch_updated_at() FROM PUBLIC, anon, authenticated;
 REVOKE EXECUTE ON FUNCTION public.protect_last_admin() FROM PUBLIC, anon, authenticated;
 
 -- Dashboard metrics (respects caller permissions)
@@ -218,3 +222,21 @@ GRANT UPDATE (full_name) ON public.profiles TO authenticated;
 GRANT SELECT ON public.user_roles TO authenticated;
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.customers TO authenticated;
 GRANT SELECT ON public.audit_logs TO authenticated;
+
+
+-- Restrict direct execution of the platform event-trigger helper; the event trigger
+-- continues to invoke it for DDL, but API roles cannot call it through RPC.
+REVOKE EXECUTE ON FUNCTION public.rls_auto_enable() FROM PUBLIC, anon, authenticated;
+
+-- Bootstrap the existing confirmed owner account. New users receive a profile
+-- through handle_new_user(), but never receive a role automatically.
+INSERT INTO public.profiles (id, email)
+SELECT id, email
+FROM auth.users
+ON CONFLICT (id) DO UPDATE SET email = EXCLUDED.email;
+
+INSERT INTO public.user_roles (user_id, role)
+SELECT id, 'admin'::public.app_role
+FROM auth.users
+WHERE lower(email) = 'ricardino.nkosi@escx.co.ao'
+ON CONFLICT (user_id, role) DO NOTHING;
