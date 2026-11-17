@@ -58,7 +58,7 @@ jobs:
         continue-on-error: true
 
       - name: ESLint excluding formatting-only rule
-        run: bunx eslint . --rule 'prettier/prettier: off'
+        run: bun run lint:semantic
 
       - name: Unit tests
         run: bun run test
