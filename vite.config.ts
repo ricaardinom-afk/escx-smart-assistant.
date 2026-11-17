@@ -8,5 +8,5 @@ import tsconfigPaths from "vite-tsconfig-paths";
 // Build configuration owned by the project.
 // src/server.ts is detected automatically by TanStack Start as the custom server entry.
 export default defineConfig({
-  plugins: [tailwindcss(), tanstackStart(), nitro(), viteReact(), tsconfigPaths()],
+  plugins: [tsconfigPaths(), tanstackStart(), nitro(), viteReact(), tailwindcss()],
 });
