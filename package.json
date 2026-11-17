@@ -12,7 +12,8 @@
     "format": "prettier --write .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint:semantic": "eslint . --rule 'prettier/prettier: off'"
   },
   "overrides": {
     "rolldown": "1.2.1"
