@@ -1,1 +1,5 @@
-project_id = "wynpaksbkoebharvjrvh"
+project_id = "ogdfncwugdzmamgaqnnc"
+
+[auth]
+# Existing users can sign in; only administrators create accounts.
+enable_signup = false
