@@ -7,8 +7,8 @@ import { Wordmark } from "@/components/brand/Wordmark";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/auth")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    semAcesso: search.semAcesso === true || search.semAcesso === "true",
+  validateSearch: (search: Record<string, unknown>): { semAcesso?: boolean | undefined } => ({
+    semAcesso: search["semAcesso"] === true || search["semAcesso"] === "true" ? true : undefined,
   }),
   head: () => ({
     meta: [
